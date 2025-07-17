@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>J.Sujan Chowdary - Portfolio</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5; /* Light gray background */
+            color: #333;
+            line-height: 1.6;
+        }
+        .navbar {
+            background-color: #ffffff; /* White background for navbar */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            transition: top 0.3s;
+        }
+        .navbar-hidden {
+            top: -80px; /* Adjust based on navbar height */
+        }
+        .section-title {
+            color: #2c3e50; /* Dark blue-gray for titles */
+            font-weight: 700;
+            margin-bottom: 2rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+        .section-title::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 60px;
+            height: 4px;
+            background-color: #3498db; /* Blue accent */
+            border-radius: 2px;
+        }
+        .timeline-item {
+            position: relative;
+            padding-left: 30px;
+            margin-bottom: 2rem;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            background-color: #3498db; /* Blue accent */
+            border-radius: 50%;
+            z-index: 1;
+            border: 2px solid #ffffff;
+        }
+        .timeline-line {
+            position: absolute;
+            left: 5px;
+            top: 0;
+            height: 100%;
+            width: 2px;
+            background-color: #bdc3c7; /* Light gray line */
+        }
+        .card {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+        }
+        .btn-primary {
+            background-color: #3498db;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: #2980b9;
+        }
+        .floating-chat-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #3498db;
+            color: white;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.8rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            z-index: 1001;
+            transition: background-color 0.3s ease;
+        }
+        .floating-chat-button:hover {
+            background-color: #2980b9;
+        }
+        .chatbot-container {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            width: 350px;
+            height: 500px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.25);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            z-index: 1000;
+            transform: translateY(100%);
+            opacity: 0;
+            transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+        }
+        .chatbot-container.open {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        .chatbot-header {
+            background-color: #3498db;
+            color: white;
+            padding: 1rem;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+        }
+        .chatbot-body {
+            flex-grow: 1;
+            padding: 1rem;
+            overflow-y: auto;
+            background-color: #f9f9f9;
+        }
+        .chatbot-message {
+            margin-bottom: 0.75rem;
+            padding: 0.6rem 1rem;
+            border-radius: 15px;
+            max-width: 80%;
+        }
+        .chatbot-message.user {
+            background-color: #e0f2f7; /* Light blue for user messages */
+            align-self: flex-end;
+            margin-left: auto;
+        }
+        .chatbot-message.bot {
+            background-color: #e9ecef; /* Light gray for bot messages */
+            align-self: flex-start;
+            margin-right: auto;
+        }
+        .chatbot-input {
+            display: flex;
+            padding: 1rem;
+            border-top: 1px solid #eee;
+        }
+        .chatbot-input input {
+            flex-grow: 1;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            padding: 0.75rem 1rem;
+            margin-right: 0.5rem;
+        }
+        .chatbot-input button {
+            background-color: #3498db;
+            color: white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2rem;
+            transition: background-color 0.3s ease;
+        }
+        .chatbot-input button:hover {
+            background-color: #2980b9;
+        }
+        .loading-dots {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .loading-dots span {
+            width: 8px;
+            height: 8px;
+            background-color: #3498db;
+            border-radius: 50%;
+            margin: 0 4px;
+            animation: bounce 0.6s infinite alternate;
+        }
+
+        .loading-dots span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .loading-dots span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes bounce {
+            from {
+                transform: translateY(0);
+            }
+            to {
+                transform: translateY(-10px);
+            }
+        }
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .navbar-nav {
+                flex-direction: column;
+                align-items: center;
+            }
+            .navbar-nav a {
+                margin: 0.5rem 0;
+            }
+            .chatbot-container {
+                width: 90%;
+                right: 5%;
+                bottom: 90px;
+                height: 70vh; /* Adjust height for mobile */
+            }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Floating Navigation Bar -->
+    <nav id="navbar" class="navbar py-4 px-6">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="text-2xl font-bold text-gray-800">J.Sujan Chowdary</div>
+            <div class="navbar-nav flex space-x-6">
+                <a href="#home" class="text-gray-600 hover:text-blue-500 transition duration-300">Home</a>
+                <a href="#about" class="text-gray-600 hover:text-blue-500 transition duration-300">About</a>
+                <a href="#education" class="text-gray-600 hover:text-blue-500 transition duration-300">Education</a>
+                <a href="#experience" class="text-gray-600 hover:text-blue-500 transition duration-300">Experience</a>
+                <a href="#projects" class="text-gray-600 hover:text-blue-500 transition duration-300">Projects</a>
+                <a href="#skills" class="text-gray-600 hover:text-blue-500 transition duration-300">Skills</a>
+                <a href="#certifications" class="text-gray-600 hover:text-blue-500 transition duration-300">Certifications</a>
+                <a href="#publications" class="text-gray-600 hover:text-blue-500 transition duration-300">Publications</a>
+                <a href="#awards" class="text-gray-600 hover:text-blue-500 transition duration-300">Awards</a>
+                <a href="#contact" class="text-gray-600 hover:text-blue-500 transition duration-300">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="relative bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-20 md:py-32 mt-16">
+        <div class="container mx-auto flex flex-col md:flex-row items-center justify-center px-6">
+            <div class="md:w-1/2 text-center md:text-left mb-8 md:mb-0">
+                <h1 class="text-4xl md:text-6xl font-extrabold leading-tight mb-4 animate-fade-in-down">
+                    Hi, I'm <span class="text-yellow-300">Jujjavarapu Sujan Chowdary</span>
+                </h1>
+                <p class="text-xl md:text-2xl mb-6 animate-fade-in-up">
+                    Passionate about Cloud Computing, AI, and Automation.
+                </p>
+                <div class="flex justify-center md:justify-start space-x-4 animate-fade-in-up">
+                    <a href="#projects" class="btn-primary flex items-center">
+                        <i class="fas fa-folder-open mr-2"></i> View Projects
+                    </a>
+                    <a href="#contact" class="btn-primary flex items-center bg-transparent border border-white hover:bg-white hover:text-blue-500">
+                        <i class="fas fa-envelope mr-2"></i> Contact Me
+                    </a>
+                </div>
+            </div>
+            <div class="md:w-1/2 flex justify-center animate-fade-in-right">
+                <img src="/IMG_2349.JPG" alt="J.Sujan Chowdary" class="rounded-full w-64 h-64 md:w-80 md:h-80 object-cover border-4 border-white shadow-lg">
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-16 md:py-24 bg-white px-6">
+        <div class="container mx-auto">
+            <h2 class="section-title text-3xl md:text-4xl mb-12 text-center">About Me</h2>
+            <div class="flex flex-col md:flex-row items-center">
+                <div class="md:w-1/2 mb-8 md:mb-0 md:pr-12">
+                    <p class="text-lg text-gray-700 leading-relaxed">
+                        I'm passionate about cloud computing, AI, and automation, with hands-on experience in DevOps, CI/CD, and data analytics. I enjoy working with technologies like Kubernetes, LangChain, and AI-driven automation to make systems more efficient and innovative.
+                    </p>
+                    <p class="text-lg text-gray-700 leading-relaxed mt-4">
+                        I am looking for opportunities to apply my skills, solve real-world problems, and grow in a dynamic environment. My expertise spans across various programming languages, libraries, tools, and databases, enabling me to tackle complex challenges effectively.
+                    </p>
+                </div>
+                <div class="md:w-1/2 grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div class="bg-gray-100 p-6 rounded-lg shadow-sm">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-2"><i class="fas fa-cloud text-blue-500 mr-2"></i>Cloud Computing</h3>
+                        <p class="text-gray-600">Experienced in AWS, OpenStack, Microservices, and CI/CD pipelines.</p>
+                    </div>
+                    <div class="bg-gray-100 p-6 rounded-lg shadow-sm">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-2"><i class="fas fa-brain text-blue-500 mr-2"></i>Artificial Intelligence</h3>
+                        <p class="text-gray-600">Proficient in TensorFlow, Keras, LangChain, and NLP techniques.</p>
+                    </div>
+                    <div class="bg-gray-100 p-6 rounded-lg shadow-sm">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-2"><i class="fas fa-cogs text-blue-500 mr-2"></i>Automation & DevOps</h3>
+                        <p class="text-gray-600">Skilled in Docker, Kubernetes, Jenkins, and setting up CI/CD pipelines.</p>
+                    </div>
+                    <div class="bg-gray-100 p-6 rounded-lg shadow-sm">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-2"><i class="fas fa-chart-line text-blue-500 mr-2"></i>Data Analytics</h3>
+                        <p class="text-gray-600">Adept at data analysis, time series analysis, and utilizing tools like Pandas and NumPy.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Education Section -->
+    <section id="education" class="py-16 md:py-24 bg-gray-50 px-6">
+        <div class="container mx-auto">
+            <h2 class="section-title text-3xl md:text-4xl mb-12 text-center">Education</h2>
+            <div class="relative max-w-2xl mx-auto">
+                <div class="timeline-line"></div>
+                <div class="timeline-item">
+                    <h3 class="text-xl font-semibold text-gray-800">Master of Technology</h3>
+                    <p class="text-blue-600">SRM Institute of Science and Technology</p>
+                    <p class="text-gray-700">Network and Communication Department, Major in Cloud Computing.</p>
+                    <p class="text-gray-600">CGPA: 9.47</p>
+                    <p class="text-gray-500 text-sm mt-1">August 2024 - Present | Chennai, India</p>
+                </div>
+                <div class="timeline-item">
+                    <h3 class="text-xl font-semibold text-gray-800">Bachelor of Technology</h3>
+                    <p class="text-blue-600">Vellore Institute of Technology</p>
+                    <p class="text-700">Computer Science and Engineering, Major in Artificial Intelligence.</p>
+                    <p class="text-gray-600">CGPA: 8.63</p>
+                    <p class="text-gray-500 text-sm mt-1">September 2020 - March 2024 | Amaravati, India</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Experience Section -->
+    <section id="experience" class="py-16 md:py-24 bg-white px-6">
+        <div class="container mx-auto">
+            <h2 class="section-title text-3xl md:text-4xl mb-12 text-center">Experience</h2>
+            <div class="relative max-w-2xl mx-auto">
+                <div class="timeline-line"></div>
+                <div class="timeline-item">
+                    <h3 class="text-xl font-semibold text-gray-800">Data Analyst Intern</h3>
+                    <p class="text-blue-600">Nexus Info</p>
+                    <p class="text-gray-700">Coimbatore, India</p>
+                    <p class="text-gray-500 text-sm mt-1">2023 - 2024</p>
+                    <ul class="list-disc list-inside text-gray-700 mt-2 space-y-1">
+                        <li>Conducted in-depth analysis of huge weather datasets to identify patterns and correlations, to support better decision-making.</li>
+                        <li>Utilized time series analysis techniques to uncover temporal trends and fluctuations, contributing to forecasting accuracy and strategic planning.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="py-16 md:py-24 bg-gray-50 px-6">
+        <div class="container mx-auto">
+            <h2 class="section-title text-3xl md:text-4xl mb-12 text-center">Projects</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Project 1: REAL-ESTATE-DATA-ENGINEERING-USING-MULTI-CLOUD---LLM-project -->
+                <div class="card p-6 flex flex-col">
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-3">Real Estate Data Engineering (Multi-Cloud & LLM)</h3>
+                    <p class="text-gray-600 text-sm mb-4">Technologies: Multi-Cloud, LLMs, Data Engineering</p>
+                    <p class="text-gray-700 flex-grow mb-4">
+                        A data engineering project utilizing multi-cloud environments and Large Language Models (LLMs) for robust real estate data processing and analysis, demonstrating advanced data pipeline capabilities.
+                    </p>
+                    <a href="https://github.com/Jsujanchowdary/REAL-ESTATE-DATA-ENGINEERING-USING-MULTI-CLOUD---LLM-project" target="_blank" class="text-blue-500 hover:underline flex items-center mt-auto">
+                        <i class="fab fa-github mr-2"></i> GitHub Link
+                    </a>
+                </div>
+                <!-- Project 2: CI-CD-Corporate-Automation-Pipeline -->
+                <div class="card p-6 flex flex-col">
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-3">CI/CD Corporate Automation Pipeline</h3>
+                    <p class="text-gray-600 text-sm mb-4">Technologies: Docker, Kubernetes, Jenkins, SonarQube, Nexus, Trivy, Prometheus, Grafana</p>
+                    <p class="text-gray-700 flex-grow mb-4">
+                        Full CI/CD pipeline setup from scratch on Docker, Kubernetes, and Jenkins for secured auto-deployment, testing, security checkpoints, and real-time monitoring with Prometheus and Grafana.
+                    </p>
+                    <a href="https://github.com/Jsujanchowdary/CI-CD-Corporate-Automation-Pipeline" target="_blank" class="text-blue-500 hover:underline flex items-center mt-auto">
+                        <i class="fab fa-github mr-2"></i> GitHub Link
+                    </a>
+                </div>
+                <!-- Project 3: Googles-CacheSack---Cache-Admission-Simulator -->
+                <div class="card p-6 flex flex-col">
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-3">Google's CacheSack - Cache Admission Simulator</h3>
+                    <p class="text-gray-600 text-sm mb-4">Technologies: Simulation, Caching Algorithms, Performance Analysis</p>
+                    <p class="text-gray-700 flex-grow mb-4">
+                        Developed a comprehensive cache admission simulator, inspired by Google's CacheSack, to evaluate and optimize cache performance under various admission and eviction policies.
+                    </p>
+                    <a href="https://github.com/Jsujanchowdary/Googles-CacheSack---Cache-Admission-Simulator" target="_blank" class="text-blue-500 hover:underline flex items-center mt-auto">
+                        <i class="fab fa-github mr-2"></i> GitHub Link
+                    </a>
+                </div>
+                <!-- Project 4: AES-Encryption-and-Decryption-with-Python -->
+                <div class="card p-6 flex flex-col">
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-3">AES Encryption and Decryption with Python</h3>
+                    <p class="text-gray-600 text-sm mb-4">Technologies: Python, AES, Cryptography</p>
+                    <p class="text-gray-700 flex-grow mb-4">
+                        A robust Python implementation of the Advanced Encryption Standard (AES) algorithm, demonstrating secure data encryption and decryption capabilities for various applications.
+                    </p>
+                    <a href="https://github.com/Jsujanchowdary/AES-Encryption-and-Decryption-with-Python" target="_blank" class="text-blue-500 hover:underline flex items-center mt-auto">
+                        <i class="fab fa-github mr-2"></i> GitHub Link
+                    </a>
+                </div>
+                <!-- Project 5: RSA-Encryption-and-Decryption-with-Python -->
+                <div class="card p-6 flex flex-col">
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-3">RSA Encryption and Decryption with Python</h3>
+                    <p class="text-gray-600 text-sm mb-4">Technologies: Python, RSA, Cryptography, Asymmetric Encryption</p>
+                    <p class="text-gray-700 flex-grow mb-4">
+                        Python implementation of the RSA algorithm, showcasing asymmetric encryption and decryption principles crucial for secure communication and digital signatures.
+                    </p>
+                    <a href="https://github.com/Jsujanchowdary/RSA-Encryption-and-Decryption-with-Python" target="_blank" class="text-blue-500 hover:underline flex items-center mt-auto">
+                        <i class="fab fa-github mr-2"></i> GitHub Link
+                    </a>
+                </div>
+                <!-- Project 6: web-Data-Analysis-Using-Gen-Ai-and-LangChain -->
+                <div class="card p-6 flex flex-col">
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-3">Web Data Analysis Using Gen-AI and LangChain</h3>
+                    <p class="text-gray-600 text-sm mb-4">Technologies: Python, LangChain, Gen-AI, Streamlit, NLP</p>
+                    <p class="text-gray-700 flex-grow mb-4">
+                        Developed an AI-driven tool for automated web data analysis by integrating advanced NLP techniques with Gen-AI and LangChain, providing intuitive structured data analysis.
+                    </p>
+                    <a href="https://github.com/Jsujanchowdary/web-Data-Analysis-Using-Gen-Ai-and-LangChain" target="_blank" class="text-blue-500 hover:underline flex items-center mt-auto">
+                        <i class="fab fa-github mr-2"></i> GitHub Link
+                    </a>
+                </div>
+                <!-- Project 7: Secured-Client-Server-Communications -->
+                <div class="card p-6 flex flex-col">
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-3">Secured Client-Server Communications</h3>
+                    <p class="text-gray-600 text-sm mb-4">Technologies: Network Security, Client-Server Architecture, Cryptography</p>
+                    <p class="text-gray-700 flex-grow mb-4">
+                        Designed and implemented a secure client-server communication system, focusing on robust cryptographic protocols to ensure data integrity and confidentiality during transmission.
+                    </p>
+                    <a href="https://github.com/Jsujanchowdary/Secured-Client-Server-Communications" target="_blank" class="text-blue-500 hover:underline flex items-center mt-auto">
+                        <i class="fab fa-github mr-2"></i> GitHub Link
+                    </a>
+                </div>
+                <!-- Project 8: GAN-Model-MNIST -->
+                <div class="card p-6 flex flex-col">
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-3">GAN Model for MNIST</h3>
+                    <p class="text-gray-600 text-sm mb-4">Technologies: GANs, Deep Learning, TensorFlow, Keras, MNIST</p>
+                    <p class="text-gray-700 flex-grow mb-4">
+                        Developed and trained a Generative Adversarial Network (GAN) model on the MNIST dataset, demonstrating its ability to generate realistic handwritten digit images.
+                    </p>
+                    <a href="https://github.com/Jsujanchowdary/GAN-Model-MNIST" target="_blank" class="text-blue-500 hover:underline flex items-center mt-auto">
+                        <i class="fab fa-github mr-2"></i> GitHub Link
+                    </a>
+                </div>
+                <!-- Project 9: AI-Attorney-With-LangChain -->
+                <div class="card p-6 flex flex-col">
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-3">AI Attorney With LangChain</h3>
+                    <p class="text-gray-600 text-sm mb-4">Technologies: LangChain, StreamLit, Gen-AI, API Integration, Python, LLMs, Chatbot</p>
+                    <p class="text-gray-700 flex-grow mb-4">
+                        An innovative NLP and AI application leveraging LangChain and Gen-AI to revolutionize legal paper understanding, enabling efficient and accurate keyword-based retrieval of legal articles and case analyses.
+                    </p>
+                    <a href="https://github.com/Jsujanchowdary/AI-Attorney-With-LangChain" target="_blank" class="text-blue-500 hover:underline flex items-center mt-auto">
+                        <i class="fab fa-github mr-2"></i> GitHub Link
+                    </a>
+                </div>
+                <!-- Project 10: classify-if-the-account-belongs-to-an-individual-user-or-a-brand-organization. -->
+                <div class="card p-6 flex flex-col">
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-3">Account Classification (Individual vs. Brand)</h3>
+                    <p class="text-gray-600 text-sm mb-4">Technologies: Machine Learning, Classification, Python, Data Analysis</p>
+                    <p class="text-gray-700 flex-grow mb-4">
+                        Developed a machine learning model to accurately classify user accounts as either individual users or brand organizations based on various data features, enhancing user segmentation.
+                    </p>
+                    <a href="https://github.com/Jsujanchowdary/classify-if-the-account-belongs-to-an-individual-user-or-a-brand-organization." target="_blank" class="text-blue-500 hover:underline flex items-center mt-auto">
+                        <i class="fab fa-github mr-2"></i> GitHub Link
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills" class="py-16 md:py-24 bg-white px-6">
+        <div class="container mx-auto">
+            <h2 class="section-title text-3xl md:text-4xl mb-12 text-center">Skills</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bg-gray-100 p-6 rounded-lg shadow-sm">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2"><i class="fas fa-code text-blue-500 mr-2"></i>Programming Languages</h3>
+                    <p class="text-gray-700">Python, Java, SQL</p>
+                </div>
+                <div class="bg-gray-100 p-6 rounded-lg shadow-sm">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2"><i class="fas fa-cube text-blue-500 mr-2"></i>Libraries / Frameworks</h3>
+                    <p class="text-gray-700">NumPy, Pandas, Scikit-learn, TensorFlow, Keras, Matplotlib, Seaborn, Streamlit, LangChain</p>
+                </div>
+                <div class="bg-gray-100 p-6 rounded-lg shadow-sm">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2"><i class="fas fa-tools text-blue-500 mr-2"></i>Tools & Platforms</h3>
+                    <p class="text-gray-700">Docker, Kubernetes, Jenkins, AWS (EC2), OpenStack, Microservices, Grafana, Prometheus, BlackBox, ELK Stack, Git, Databricks</p>
+                </div>
+                <div class="bg-gray-100 p-6 rounded-lg shadow-sm">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2"><i class="fas fa-database text-blue-500 mr-2"></i>Databases</h3>
+                    <p class="text-gray-700">MySQL, MongoDB</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Certifications Section -->
+    <section id="certifications" class="py-16 md:py-24 bg-gray-50 px-6">
+        <div class="container mx-auto">
+            <h2 class="section-title text-3xl md:text-4xl mb-12 text-center">Certifications</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2"><i class="fas fa-certificate text-blue-500 mr-2"></i>AWS Academy Cloud Security Foundations</h3>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2"><i class="fas fa-certificate text-blue-500 mr-2"></i>AWS Academy Cloud Developing</h3>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2"><i class="fas fa-certificate text-blue-500 mr-2"></i>AWS Academy Microservices and CI/CD Pipeline Builder</h3>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2"><i class="fas fa-certificate text-blue-500 mr-2"></i>AWS Academy Cloud Architecting</h3>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Publications Section -->
+    <section id="publications" class="py-16 md:py-24 bg-white px-6">
+        <div class="container mx-auto">
+            <h2 class="section-title text-3xl md:text-4xl mb-12 text-center">Publications</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="card p-6 flex flex-col">
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-3">Data Analysis Automation with LangChain and LLm Agent</h3>
+                    <p class="text-gray-600 text-sm mb-4">Date: February 2025</p>
+                    <p class="text-gray-700 flex-grow mb-4">
+                        AI-driven automation in data analysis: NLP techniques combined with LangChain PDF text extraction and LLm Agent for intuitive structured data analysis. It improves the precision and productivity of the decision-making process.
+                    </p>
+                </div>
+                <div class="card p-6 flex flex-col">
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-3">AI-based Attorney Using NLTK Library</h3>
+                    <p class="text-gray-600 text-sm mb-4">Date: January 2024</p>
+                    <p class="text-gray-700 flex-grow mb-4">
+                        Introduced AI Attorney an NLP application using NLTK for legal study to get accurate keyword-based retrieve relevant legal articles and case analyses with significantly higher efficiency and accuracy.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Awards Section -->
+    <section id="awards" class="py-16 md:py-24 bg-gray-50 px-6">
+        <div class="container mx-auto">
+            <h2 class="section-title text-3xl md:text-4xl mb-12 text-center">Awards</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="card p-6 flex flex-col">
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-3">Merit Certification in Clinical Engineering (ECS)</h3>
+                    <p class="text-gray-600 text-sm mb-4">Year: 2023</p>
+                    <p class="text-gray-700 flex-grow mb-4">
+                        Developed voice-command and hand gesture-controlled wheelchair prototype recognized as a top 10 project at VIT-AP University.
+                    </p>
+                </div>
+                <div class="card p-6 flex flex-col">
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-3">Merit Certification in SmartInternz</h3>
+                    <p class="text-gray-600 text-sm mb-4">Year: 2023</p>
+                    <p class="text-gray-700 flex-grow mb-4">
+                        Developed the project entitled "Hotel Management System" under the supervision of a mentor and secured 30 out of 30 marks in the Grand Assessment.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-16 md:py-24 bg-gray-50 px-6">
+        <div class="container mx-auto">
+            <h2 class="section-title text-3xl md:text-4xl mb-12 text-center">Contact Me</h2>
+            <div class="max-w-md mx-auto bg-white p-8 rounded-lg shadow-lg">
+                <p class="text-center text-gray-700 mb-6">
+                    Have a question or want to work together? Feel free to reach out!
+                </p>
+                <form action="https://formspree.io/f/xdkdknbn" method="POST" class="space-y-6">
+                    <div>
+                        <label for="name" class="block text-gray-700 text-sm font-bold mb-2">Name</label>
+                        <input type="text" id="name" name="name" class="shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Your Name" required>
+                    </div>
+                    <div>
+                        <label for="email" class="block text-gray-700 text-sm font-bold mb-2">Email</label>
+                        <input type="email" id="email" name="_replyto" class="shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="your.email@example.com" required>
+                    </div>
+                    <div>
+                        <label for="message" class="block text-gray-700 text-sm font-bold mb-2">Message</label>
+                        <textarea id="message" name="message" rows="6" class="shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Your message..." required></textarea>
+                    </div>
+                    <div class="flex justify-center">
+                        <button type="submit" class="btn-primary flex items-center">
+                            <i class="fas fa-paper-plane mr-2"></i> Send Message
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <div class="text-center mt-10">
+                <p class="text-gray-700 text-lg">
+                    Alternatively, connect with me on:
+                </p>
+                <div class="flex justify-center space-x-6 mt-4">
+                    <a href="https://www.linkedin.com/in/jujjavarapu-sujan-chowdary-39027021b" target="_blank" class="text-gray-600 hover:text-blue-700 transition duration-300 text-4xl">
+                        <i class="fab fa-linkedin"></i>
+                    </a>
+                    <a href="https://github.com/Jsujanchowdary" target="_blank" class="text-gray-600 hover:text-gray-900 transition duration-300 text-4xl">
+                        <i class="fab fa-github"></i>
+                    </a>
+                    <a href="mailto:chowdarysujan27@gmail.com" class="text-gray-600 hover:text-red-500 transition duration-300 text-4xl">
+                        <i class="fas fa-envelope"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto text-center px-6">
+            <p>&copy; 2024 J.Sujan Chowdary. All rights reserved.</p>
+            <p class="mt-2 text-sm">Designed with <i class="fas fa-heart text-red-500 mx-1"></i> by Sujan Chowdary</p>
+        </div>
+    </footer>
+
+    <!-- Floating Chatbot Button -->
+    <div id="chat-button" class="floating-chat-button">
+        <i class="fas fa-comments"></i>
+    </div>
+
+    <!-- Chatbot Container -->
+    <div id="chatbot-container" class="chatbot-container">
+        <div class="chatbot-header">
+            <span>Chat with Sujan's Resume</span>
+            <button id="close-chatbot" class="text-white text-2xl">&times;</button>
+        </div>
+        <div id="chatbot-body" class="chatbot-body flex flex-col">
+            <!-- Chat messages will appear here -->
+            <div class="chatbot-message bot">Hello! I'm a chatbot designed to answer questions about Sujan's resume. How can I help you today?</div>
+        </div>
+        <div class="chatbot-input">
+            <input type="text" id="user-input" placeholder="Ask me anything about Sujan...">
+            <button id="send-button"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+
+    <script>
+        // Navbar scroll hide/show
+        let lastScrollTop = 0;
+        const navbar = document.getElementById('navbar');
+
+        window.addEventListener('scroll', function() {
+            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            if (scrollTop > lastScrollTop) {
+                // Downscroll
+                navbar.classList.add('navbar-hidden');
+            } else {
+                // Upscroll
+                navbar.classList.remove('navbar-hidden');
+            }
+            lastScrollTop = scrollTop;
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Chatbot functionality
+        const chatButton = document.getElementById('chat-button');
+        const chatbotContainer = document.getElementById('chatbot-container');
+        const closeChatbotButton = document.getElementById('close-chatbot');
+        const chatbotBody = document.getElementById('chatbot-body');
+        const userInput = document.getElementById('user-input');
+        const sendButton = document.getElementById('send-button');
+
+        chatButton.addEventListener('click', () => {
+            chatbotContainer.classList.toggle('open');
+        });
+
+        closeChatbotButton.addEventListener('click', () => {
+            chatbotContainer.classList.remove('open');
+        });
+
+        sendButton.addEventListener('click', sendMessage);
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        const resumeContent = `
+            J.Sujan Chowdary's Resume:
+
+            OBJECTIVE: Passionate about cloud computing, AI, and automation, with hands-on experience in DevOps, CI/CD, and data analytics. Enjoys working with technologies like Kubernetes, LangChain, and AI-driven automation to make systems more efficient and innovative. Seeking opportunities to apply skills, solve real-world problems, and grow in a dynamic environment.
+
+            EDUCATION:
+            Master of Technology (08/2024-present)
+            SRM INSTITUTE OF SCIENCE AND TECHNOLOGY, Chennai, India
+            Network and Communication Department, Major in Cloud Computing. CGPA: 9.47
+
+            Bachelor of Technology (09/2020-03/2024)
+            VELLORE INSTITUTE OF TECHNOLOGY, Amaravati, India
+            Computer Science and Engineering, Major in Artificial Intelligence. CGPA: 8.63
+
+            SKILLS:
+            Programming Languages: Python, Java, SQL
+            Libraries / Frameworks: NumPy, Pandas, Scikit-learn, TensorFlow, Keras, Matplotlib, Seaborn, Streamlit.
+            Tools Platform: Docker, Kubernetes, Jenkins, AWS (EC2), OpenStack, Microservices, Grafana, Prometheus, BlackBox, ELK Stack, Git, Databricks.
+            Databases: MySQL, MongoDB.
+
+            EXPERIENCE:
+            Data Analyst Intern (2023-2024)
+            Nexus Info, Coimbatore, India
+            - Conducted in-depth analysis of huge weather datasets to identify patterns and correlations, to support better decision-making.
+            - Utilized time series analysis techniques to uncover temporal trends and fluctuations, contributing to forecasting accuracy and strategic planning.
+
+            PROJECTS:
+            1. Real Estate Data Engineering (Multi-Cloud & LLM) (Link: https://github.com/Jsujanchowdary/REAL-ESTATE-DATA-ENGINEERING-USING-MULTI-CLOUD---LLM-project)
+               Summary: A data engineering project utilizing multi-cloud environments and Large Language Models (LLMs) for robust real estate data processing and analysis, demonstrating advanced data pipeline capabilities.
+
+            2. CI/CD Corporate Automation Pipeline (Link: https://github.com/Jsujanchowdary/CI-CD-Corporate-Automation-Pipeline)
+               Summary: Full CI/CD pipeline setup from scratch on Docker, Kubernetes, and Jenkins for secured auto-deployment, testing, security checkpoints, and real-time monitoring with Prometheus and Grafana.
+
+            3. Google's CacheSack - Cache Admission Simulator (Link: https://github.com/Jsujanchowdary/Googles-CacheSack---Cache-Admission-Simulator)
+               Summary: Developed a comprehensive cache admission simulator, inspired by Google's CacheSack, to evaluate and optimize cache performance under various admission and eviction policies.
+
+            4. AES Encryption and Decryption with Python (Link: https://github.com/Jsujanchowdary/AES-Encryption-and-Decryption-with-Python)
+               Summary: A robust Python implementation of the Advanced Encryption Standard (AES) algorithm, demonstrating secure data encryption and decryption capabilities for various applications.
+
+            5. RSA Encryption and Decryption with Python (Link: https://github.com/Jsujanchowdary/RSA-Encryption-and-Decryption-with-Python)
+               Summary: Python implementation of the RSA algorithm, showcasing asymmetric encryption and decryption principles crucial for secure communication and digital signatures.
+
+            6. Web Data Analysis Using Gen-AI and LangChain (Link: https://github.com/Jsujanchowdary/web-Data-Analysis-Using-Gen-Ai-and-LangChain)
+               Summary: Developed an AI-driven tool for automated web data analysis by integrating advanced NLP techniques with Gen-AI and LangChain, providing intuitive structured data analysis.
+
+            7. Secured Client-Server Communications (Link: https://github.com/Jsujanchowdary/Secured-Client-Server-Communications)
+               Summary: Designed and implemented a secure client-server communication system, focusing on robust cryptographic protocols to ensure data integrity and confidentiality during transmission.
+
+            8. GAN Model for MNIST (Link: https://github.com/Jsujanchowdary/GAN-Model-MNIST)
+               Summary: Developed and trained a Generative Adversarial Network (GAN) model on the MNIST dataset, demonstrating its ability to generate realistic handwritten digit images.
+
+            9. AI Attorney With LangChain (Link: https://github.com/Jsujanchowdary/AI-Attorney-With-LangChain)
+               Summary: An innovative NLP and AI application leveraging LangChain and Gen-AI to revolutionize legal paper understanding, enabling efficient and accurate keyword-based retrieval of legal articles and case analyses.
+
+            10. Account Classification (Individual vs. Brand) (Link: https://github.com/Jsujanchowdary/classify-if-the-account-belongs-to-an-individual-user-or-a-brand-organization.)
+                Summary: Developed a machine learning model to accurately classify user accounts as either individual users or brand organizations based on various data features, enhancing user segmentation.
+
+            CERTIFICATES:
+            - AWS Academy Cloud Security Foundations
+            - AWS Academy Cloud Developing
+            - AWS Academy Microservices and CI/CD Pipeline Builder
+            - AWS Academy Cloud Architecting
+
+            PUBLICATIONS:
+            - Data Analysis Automation with LangChain and LLm Agent (02/2025)
+              AI-driven automation in data analysis: NLP techniques combined with LangChain PDF text extraction and LLm Agent for intuitive structured data analysis. Improves precision and productivity of the decision-making process.
+            - AI-based Attorney Using NLTK Library (01/2024)
+              Introduced AI Attorney an NLP application using NLTK for legal study to get accurate keyword-based retrieve relevant legal articles and case analyses with significantly higher efficiency and accuracy.
+
+            AWARDS:
+            - Merit Certification in Clinical Engineering (ECS) (2023)
+              Developed voice-command and hand gesture-controlled wheelchair prototype recognized as a top 10 project at VIT-AP University.
+            - Merit Certification in SmartInternz (2023)
+              Developed the project entitled "Hotel Management System" under the supervision of a mentor and secured 30 out of 30 marks in the Grand Assessment.
+
+            CONTACT:
+            Phone: +91-7780539873
+            Email: chowdarysujan27@gmail.com
+            LinkedIn: https://www.linkedin.com/in/jujjavarapu-sujan-chowdary-39027021b
+            GitHub: https://github.com/Jsujanchowdary
+            Portfolio: [Link to be provided by user]
+            Location: Chennai, India
+        `;
+
+        async function sendMessage() {
+            const message = userInput.value.trim();
+            if (message === '') return;
+
+            appendMessage(message, 'user');
+            userInput.value = '';
+            showLoadingIndicator();
+
+            try {
+                const prompt = `You are Sujan Chowdary's resume assistant chatbot. Please answer the user's question based only on the resume provided below. If the answer is not in the resume, say so politely. Always format your response in clean text.
+
+                Resume Content:
+                ${resumeContent}
+
+                User Question: "${message}"
+
+                Format the answer nicely using spacing without.
+
+                Provide a concise and helpful answer.`;
+
+                const response = await fetch("/api/chat", {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt: prompt })  // ✅ SEND ONLY THIS
+                });
+
+                const result = await response.json();
+                hideLoadingIndicator();
+
+                if (result.candidates && result.candidates[0]?.content?.parts?.[0]?.text) {
+                    const botResponse = result.candidates[0].content.parts[0].text;
+                    appendMessage(botResponse, 'bot');
+                } else {
+                    appendMessage("I'm sorry, I couldn't get a response. Please try again.", 'bot');
+                }
+            } catch (error) {
+                console.error('Error fetching from backend proxy:', error);
+                hideLoadingIndicator();
+                appendMessage("I'm sorry, there was an error processing your request. Please try again later.", 'bot');
+            }
+        }
+
+        function appendMessage(text, sender) {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('chatbot-message', sender);
+            messageElement.textContent = text;
+            chatbotBody.appendChild(messageElement);
+            chatbotBody.scrollTop = chatbotBody.scrollHeight; // Scroll to bottom
+        }
+
+        function showLoadingIndicator() {
+            const loadingDiv = document.createElement('div');
+            loadingDiv.id = 'loading-indicator';
+            loadingDiv.classList.add('loading-dots', 'chatbot-message', 'bot');
+            loadingDiv.innerHTML = `
+                <span></span>
+                <span></span>
+                <span></span>
+            `;
+            chatbotBody.appendChild(loadingDiv);
+            chatbotBody.scrollTop = chatbotBody.scrollHeight;
+        }
+
+        function hideLoadingIndicator() {
+            const loadingDiv = document.getElementById('loading-indicator');
+            if (loadingDiv) {
+                loadingDiv.remove();
+            }
+        }
+
+        // Initial setup for image source
+        document.addEventListener('DOMContentLoaded', () => {
+            const profileImage = document.querySelector('.hero-section img');
+            if (profileImage) {
+                // Check if the image path is valid or needs adjustment for local preview
+                // For live deployment, 'IMG_2349.jpg' should be in the same directory or a correct path
+                profileImage.src = 'IMG_2349.jpg'; // Ensure this path is correct
+            }
+        });
+
+    </script>
+</body>
+</html>
