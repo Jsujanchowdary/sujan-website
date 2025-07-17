@@ -223,20 +223,65 @@
                 transform: translateY(-10px);
             }
         }
-        /* Responsive adjustments */
+
+        /* Responsive adjustments for mobile menu (hamburger) */
         @media (max-width: 768px) {
-            .navbar-nav {
-                flex-direction: column;
+            .navbar .container {
+                flex-direction: row; /* Keep logo and hamburger on one row */
+                justify-content: space-between; /* Space them out */
                 align-items: center;
+                padding: 0.75rem 1.5rem; /* Consistent padding */
+            }
+            .navbar-nav {
+                display: none; /* Hide navigation links by default */
+                flex-direction: column;
+                position: absolute;
+                top: 100%; /* Position below the navbar */
+                left: 0;
+                width: 100%;
+                background-color: #ffffff; /* Same as navbar background */
+                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+                padding: 1rem 0;
+                border-top: 1px solid #eee;
+                transition: all 0.3s ease-in-out;
+                transform: translateY(-10px); /* Slight initial offset */
+                opacity: 0;
+                visibility: hidden;
+            }
+            .navbar-nav.active {
+                display: flex; /* Show when active */
+                transform: translateY(0); /* Slide into place */
+                opacity: 1;
+                visibility: visible;
             }
             .navbar-nav a {
-                margin: 0.5rem 0;
+                padding: 0.75rem 1.5rem; /* Ample padding for touch targets */
+                text-align: center;
+                width: 100%;
+                margin: 0; /* Remove vertical margins between links */
+                border-bottom: 1px solid #f0f2f5; /* Separator for links */
+            }
+            .navbar-nav a:last-child {
+                border-bottom: none;
+            }
+            .hamburger-menu {
+                display: block; /* Show hamburger icon */
+                cursor: pointer;
+                font-size: 1.5rem;
+                color: #333;
             }
             .chatbot-container {
                 width: 90%;
                 right: 5%;
                 bottom: 90px;
                 height: 70vh; /* Adjust height for mobile */
+            }
+        }
+
+        /* Hide hamburger on desktop */
+        @media (min-width: 769px) {
+            .hamburger-menu {
+                display: none;
             }
         }
     </style>
@@ -246,8 +291,11 @@
     <!-- Floating Navigation Bar -->
     <nav id="navbar" class="navbar py-4 px-6">
         <div class="container mx-auto flex justify-between items-center">
-            <div class="text-2xl font-bold text-gray-800">J.Sujan Chowdary</div>
-            <div class="navbar-nav flex space-x-6">
+            <div class="text-2xl font-bold text-gray-800">Sujan Chowdary</div>
+            <div class="hamburger-menu" id="hamburger-menu">
+                <i class="fas fa-bars"></i>
+            </div>
+            <div id="navbar-nav" class="navbar-nav flex space-x-6 md:flex">
                 <a href="#home" class="text-gray-600 hover:text-blue-500 transition duration-300">Home</a>
                 <a href="#about" class="text-gray-600 hover:text-blue-500 transition duration-300">About</a>
                 <a href="#education" class="text-gray-600 hover:text-blue-500 transition duration-300">Education</a>
@@ -282,7 +330,7 @@
                 </div>
             </div>
             <div class="md:w-1/2 flex justify-center animate-fade-in-right">
-                <img src="/IMG_2349.JPG" alt="J.Sujan Chowdary" class="rounded-full w-64 h-64 md:w-80 md:h-80 object-cover border-4 border-white shadow-lg">
+                <img src="IMG_2349.jpg" alt="J.Sujan Chowdary" class="rounded-full w-64 h-64 md:w-80 md:h-80 object-cover border-4 border-white shadow-lg">
             </div>
         </div>
     </section>
@@ -365,7 +413,6 @@
             </div>
         </div>
     </section>
-
     <!-- Projects Section -->
     <section id="projects" class="py-16 md:py-24 bg-gray-50 px-6">
         <div class="container mx-auto">
